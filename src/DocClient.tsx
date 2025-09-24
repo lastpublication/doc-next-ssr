@@ -198,7 +198,7 @@ export function DocClient({
                     onClick={() =>
                       handleCopyToClipboard(codeBlock.code, buttonId)
                     }
-                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 bg-gray-200 dark:bg-stone-900 p-1 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-stone-600"
+                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 bg-white dark:bg-black/70  p-1 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-stone-600"
                     aria-label="Copier le code"
                   >
                     <svg
@@ -256,7 +256,7 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div className="z-50 max-w-md w-full md:w-1/4 fixed md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 ">
+        <div className="z-50 max-w-md w-full md:w-1/4 md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 fixed">
           <aside
             className={`lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
