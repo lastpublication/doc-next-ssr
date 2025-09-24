@@ -17,8 +17,8 @@
       "types": "./dist/index.d.ts"
     },
     "./client": {
-      "import": "./dist/client.mjs",
-      "require": "./dist/client.cjs",
+      "import": "./dist/client/index.mjs",
+      "require": "./dist/client/index.cjs",
       "types": "./dist/src/client.d.ts"
     },
     "./ssr": {
@@ -29,12 +29,8 @@
   },
   "typesVersions": {
     "*": {
-      "client": [
-        "dist/src/client.d.ts"
-      ],
-      "ssr": [
-        "dist/src/ssr.d.ts"
-      ]
+      "client": ["dist/src/client.d.ts"],
+      "ssr": ["dist/src/ssr.d.ts"]
     }
   },
   "scripts": {
