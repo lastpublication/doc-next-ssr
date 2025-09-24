@@ -1,6 +1,6 @@
 {
   "name": "@lastbrain/doc-next-ssr",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Next.js documentation renderer with SSR and client enhancement",
   "license": "MIT",
   "main": "dist/index.cjs",
@@ -10,8 +10,7 @@
   "files": [
     "dist"
   ],
-
-   "exports": {
+  "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
@@ -28,7 +27,6 @@
       "types": "./dist/ssr.d.ts"
     }
   },
-
   "scripts": {
     "build": "tsup && node scripts/make-client-entry.cjs",
     "dev": "tsup --watch",
