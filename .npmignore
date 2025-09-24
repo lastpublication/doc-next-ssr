@@ -1,0 +1,23 @@
+# Source files
+src/
+tsconfig.json
+
+# Development files
+example/
+.gitignore
+.npmignore
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+*.test.*
+*.spec.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
