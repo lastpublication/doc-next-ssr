@@ -29,12 +29,8 @@
   },
   "typesVersions": {
     "*": {
-      "client": [
-        "dist/src/client.d.ts"
-      ],
-      "ssr": [
-        "dist/src/ssr.d.ts"
-      ]
+      "client": ["dist/src/client.d.ts"],
+      "ssr": ["dist/src/ssr.d.ts"]
     }
   },
   "scripts": {
