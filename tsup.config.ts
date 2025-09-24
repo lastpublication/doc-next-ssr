@@ -1,20 +1,38 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig([
+  // build “général”
   {
-    // ⚠️ clés d'entry = chemins de sortie (garde DocClient en PascalCase)
-    entry: {
-      "src/DocClient": "src/DocClient.tsx",
-      "src/ssr": "src/DocSSR.tsx",
-      index: "src/index.ts",
-    },
-    format: ["esm", "cjs"],
+    entry: { index: "src/index.ts" },
     dts: true,
-    sourcemap: true,
+    format: ["esm", "cjs"],
+    outDir: "dist",
     clean: true,
-    splitting: false,
     treeshake: true,
-    target: "es2020",
-    external: ["react", "react-dom", "next", "framer-motion"],
+    sourcemap: true,
+  },
+  // build client-only (ajoute le banner "use client")
+  {
+    entry: { "client/index": "src/client/index.ts" },
+    dts: true,
+    format: ["esm"],
+    outDir: "dist",
+    clean: false,
+    treeshake: true,
+    sourcemap: true,
+    esbuildOptions(options) {
+      options.banner = options.banner || {};
+      options.banner.js = '"use client";';
+    },
+  },
+  // build server-only
+  {
+    entry: { "server/index": "src/server/index.ts" },
+    dts: true,
+    format: ["esm"],
+    outDir: "dist",
+    clean: false,
+    treeshake: true,
+    sourcemap: true,
   },
 ]);

@@ -6,9 +6,9 @@ export type {
   DocListBlock,
   DocParagraphBlock,
   DocSection,
-} from './types';
-export { DocSSR } from './DocSSR';
-export type { DocSSRProps } from './DocSSR';
-export { DocClient } from './DocClient';
-export type { DocClientProps } from './DocClient';
-export { DEFAULT_SSR_ID } from './utils';
+} from "./types";
+
+export { DEFAULT_SSR_ID } from "./utils";
+
+export { DocSSR } from "./DocSSR";
+export type { DocSSRProps } from "./DocSSR";
