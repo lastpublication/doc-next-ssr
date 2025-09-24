@@ -1,0 +1,50 @@
+{
+  "name": "doc-next-ssr",
+  "version": "0.1.0",
+  "description": "Easily generate documentation for Next.js applications with SSR and client-side rendering support",
+  "main": "dist/index.js",
+  "bin": {
+    "doc-next-ssr": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nextjs",
+    "documentation",
+    "ssr",
+    "client-side",
+    "generator",
+    "docs",
+    "typescript",
+    "react"
+  ],
+  "author": "Laurent Astruc",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "peerDependencies": {
+    "next": ">=12.0.0",
+    "react": ">=17.0.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^4.9.0"
+  },
+  "dependencies": {
+    "commander": "^10.0.0",
+    "glob": "^11.0.3",
+    "typescript": "^4.9.0"
+  }
+}
