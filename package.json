@@ -1,6 +1,6 @@
 {
   "name": "@lastbrain/doc-next-ssr",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Next.js documentation renderer with SSR and client enhancement",
   "license": "MIT",
   "main": "dist/index.cjs",
@@ -19,7 +19,7 @@
     "./client": {
       "import": "./dist/client.mjs",
       "require": "./dist/client.cjs",
-      "types": "./dist/src/client.d.ts" 
+      "types": "./dist/src/client.d.ts"
     },
     "./ssr": {
       "import": "./dist/ssr.mjs",
@@ -29,8 +29,12 @@
   },
   "typesVersions": {
     "*": {
-      "client": ["dist/src/client.d.ts"],
-      "ssr": ["dist/src/ssr.d.ts"]
+      "client": [
+        "dist/src/client.d.ts"
+      ],
+      "ssr": [
+        "dist/src/ssr.d.ts"
+      ]
     }
   },
   "scripts": {
