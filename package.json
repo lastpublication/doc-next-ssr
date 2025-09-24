@@ -10,6 +10,12 @@
   "files": [
     "dist"
   ],
+
+  "exports": {
+  ".": { "import": "./dist/index.mjs", "require": "./dist/index.cjs", "types": "./dist/index.d.ts" },
+  "./client": { "import": "./dist/components/DocClient.mjs", "require": "./dist/components/DocClient.cjs", "types": "./dist/components/DocClient.d.ts" },
+  "./ssr":    { "import": "./dist/components/DocSSR.mjs",   "require": "./dist/components/DocSSR.cjs",   "types": "./dist/components/DocSSR.d.ts" }
+},
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist"

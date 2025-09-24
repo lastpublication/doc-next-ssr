@@ -1,19 +1,32 @@
+// tsup.config.ts
 import { defineConfig } from "tsup";
 
-export default defineConfig({
-  entry: ["src/index.ts"],
-  format: ["esm", "cjs"], // ESM d’abord (meilleur tree-shake), CJS pour compat
-  dts: true, // génère index.d.ts
-  sourcemap: true,
-  clean: true,
-  splitting: false, // ok pour une lib (sinon gère les chunks)
-  treeshake: true, // 👉 utile pour réduire la taille
-  minify: false, // laisse false en dev; tu peux activer en prod
-  target: "es2020", // cible moderne
-  external: [
-    "react",
-    "react-dom",
-    "next",
-    "framer-motion", // évite de bundler FM (préviens les doubles React)
-  ],
-});
+export default defineConfig([
+  // Build CLIENT: injecte "use client"
+  {
+    entry: { "components/DocClient": "src/DocClient.tsx" },
+    format: ["esm", "cjs"],
+    dts: true,
+    sourcemap: true,
+    clean: true,
+    splitting: false,
+    treeshake: true,
+    target: "es2020",
+    external: ["react", "react-dom", "next", "framer-motion"],
+    banner: { js: '"use client";' }, // 👈 ligne 1 assurée
+  },
+  // Build SSR + index (pas de "use client")
+  {
+    entry: {
+      "components/DocSSR": "src/DocSSR.tsx",
+      index: "src/index.ts",
+    },
+    format: ["esm", "cjs"],
+    dts: true,
+    sourcemap: true,
+    splitting: false,
+    treeshake: true,
+    target: "es2020",
+    external: ["react", "react-dom", "next", "framer-motion"],
+  },
+]);

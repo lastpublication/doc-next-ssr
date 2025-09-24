@@ -90,7 +90,12 @@ import { getDoc } from "@/lib/get-doc";
 export default async function DocsPage() {
   const doc = await getDoc();
 
-  return <DocSSR doc={doc} />;
+  return (
+    <>
+      <DocSSR doc={doc} visuallyHidden />
+      <DocClient doc={doc} />
+    </>
+  );
 }
 ```
 
