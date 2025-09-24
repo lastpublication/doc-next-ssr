@@ -1,6 +1,6 @@
 {
   "name": "@lastbrain/doc-next-ssr",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Next.js documentation renderer with SSR and client enhancement",
   "license": "MIT",
   "main": "dist/index.cjs",
@@ -11,14 +11,30 @@
     "dist"
   ],
   "exports": {
-    ".":        { "import": "./dist/index.mjs",  "require": "./dist/index.cjs",  "types": "./dist/index.d.ts" },
-    "./client": { "import": "./dist/client/index.mjs", "require": "./dist/client/index.cjs", "types": "./dist/src/DocClient.d.ts" },
-    "./ssr":    { "import": "./dist/src/ssr.mjs", "require": "./dist/src/ssr.cjs", "types": "./dist/src/ssr.d.ts" }
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/client/index.mjs",
+      "require": "./dist/client/index.cjs",
+      "types": "./dist/src/DocClient.d.ts"
+    },
+    "./ssr": {
+      "import": "./dist/src/ssr.mjs",
+      "require": "./dist/src/ssr.cjs",
+      "types": "./dist/src/ssr.d.ts"
+    }
   },
   "typesVersions": {
     "*": {
-      "client": ["dist/src/DocClient.d.ts"],
-      "ssr":    ["dist/src/ssr.d.ts"]
+      "client": [
+        "dist/src/DocClient.d.ts"
+      ],
+      "ssr": [
+        "dist/src/ssr.d.ts"
+      ]
     }
   },
   "scripts": {
