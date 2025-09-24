@@ -23,8 +23,8 @@ Generated documentation for your Next.js application.
 
 Components that support Server-Side Rendering:
 
-- [Button](./Button.md) - A reusable button component with various styles and sizes @example <Button variant="primary" size="lg" onClick={() => console.log('clicked')}> Click me </Button> /
 - [Home](./Home.md) - Home page component that demonstrates SSR and client-side functionality /
+- [Button](./Button.md) - A reusable button component with various styles and sizes @example <Button variant="primary" size="lg" onClick={() => console.log('clicked')}> Click me </Button> /
 
 
 
@@ -32,8 +32,8 @@ Components that support Server-Side Rendering:
 
 Components that require client-side rendering:
 
-- [Button](./Button.md) - A reusable button component with various styles and sizes @example <Button variant="primary" size="lg" onClick={() => console.log('clicked')}> Click me </Button> /
 - [Home](./Home.md) - Home page component that demonstrates SSR and client-side functionality /
+- [Button](./Button.md) - A reusable button component with various styles and sizes @example <Button variant="primary" size="lg" onClick={() => console.log('clicked')}> Click me </Button> /
 
 
 ---

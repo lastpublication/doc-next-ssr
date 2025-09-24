@@ -10,7 +10,9 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example": "node dist/cli.js generate --source ./example/src --output ./example/docs",
+    "demo": "npm run example && echo 'Demo documentation generated in ./example/docs'"
   },
   "keywords": [
     "nextjs",

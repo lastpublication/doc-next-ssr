@@ -45,6 +45,11 @@ program
       const outputs = await generator.generate();
       
       console.log(`✨ Generated ${outputs.length} documentation files`);
+      
+      if (outputs.length === 0) {
+        console.log('💡 Try adjusting your source directory or file pattern to find components');
+        process.exit(1);
+      }
     } catch (error) {
       console.error('❌ Error generating documentation:', error);
       process.exit(1);
@@ -54,10 +59,11 @@ program
 program
   .command('init')
   .description('Initialize documentation configuration')
-  .action(() => {
-    console.log('🔧 Creating doc-next-ssr configuration...');
-    
-    const configContent = `module.exports = {
+  .action(async () => {
+    try {
+      console.log('🔧 Creating doc-next-ssr configuration...');
+      
+      const configContent = `module.exports = {
   sourceDir: './src',
   outputDir: './docs',
   includeSSR: true,
@@ -72,9 +78,14 @@ program
   template: 'default'
 };`;
 
-    require('fs').writeFileSync('doc-next-ssr.config.js', configContent);
-    console.log('✅ Configuration file created: doc-next-ssr.config.js');
-    console.log('📝 Edit the configuration file to customize your documentation generation');
+      const fs = await import('fs');
+      fs.writeFileSync('doc-next-ssr.config.js', configContent);
+      console.log('✅ Configuration file created: doc-next-ssr.config.js');
+      console.log('📝 Edit the configuration file to customize your documentation generation');
+    } catch (error) {
+      console.error('❌ Error creating configuration:', error);
+      process.exit(1);
+    }
   });
 
 // Help command
