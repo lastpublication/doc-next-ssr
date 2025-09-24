@@ -1,18 +1,12 @@
 const fs = require("fs");
-fs.mkdirSync("dist/client", { recursive: true });
+const p = "dist/client/index.mjs";
+let s = fs.readFileSync(p, "utf8");
 
-fs.writeFileSync(
-  "dist/client/index.mjs",
-  `"use client";
-export * from "../src/DocClient.mjs";
-export { default } from "../src/DocClient.mjs";
-`
-);
-
-fs.writeFileSync(
-  "dist/client/index.cjs",
-  `"use client";
-module.exports = require("../src/DocClient.cjs");
-`
-);
-console.log("[postbuild] client wrapper -> src/DocClient.(mjs|cjs)");
+// insère la directive si elle n'est pas déjà en 1ère ligne
+if (!s.startsWith('"use client";')) {
+  s = '"use client";\n' + s;
+  fs.writeFileSync(p, s);
+  console.log('[ensure-use-client] added "use client" to', p);
+} else {
+  console.log('[ensure-use-client] already present in', p);
+}

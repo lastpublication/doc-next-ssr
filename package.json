@@ -7,9 +7,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "sideEffects": false,
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -25,16 +23,6 @@
       "import": "./dist/server/index.mjs"
     }
   },
-  "typesVersions": {
-    "*": {
-      "client": [
-        "dist/src/DocClient.d.ts"
-      ],
-      "ssr": [
-        "dist/src/ssr.d.ts"
-      ]
-    }
-  },
   "scripts": {
     "build": "tsup && node scripts/make-client-entry.cjs",
     "dev": "tsup --watch",
@@ -47,9 +35,7 @@
     "framer-motion": "^10 || ^11 || ^12"
   },
   "peerDependenciesMeta": {
-    "framer-motion": {
-      "optional": true
-    }
+    "framer-motion": { "optional": true }
   },
   "devDependencies": {
     "@types/react": "^18.3.24",

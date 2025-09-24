@@ -2,7 +2,6 @@
 
 export { DocClient } from "../DocClient";
 export type { DocClientProps } from "../DocClient";
-
 export type {
   DocBlock,
   DocCodeBlock,
