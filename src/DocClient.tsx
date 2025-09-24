@@ -373,3 +373,5 @@ export function DocClient({
     </motion.section>
   );
 }
+
+export default DocClient;
