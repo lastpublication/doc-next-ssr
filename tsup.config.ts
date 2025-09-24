@@ -1,10 +1,10 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig([
-  // build des sources pour produire dist/src/*.d.ts
   {
+    // ⚠️ clés d'entry = chemins de sortie (garde DocClient en PascalCase)
     entry: {
-      "src/client": "src/DocClient.tsx",
+      "src/DocClient": "src/DocClient.tsx",
       "src/ssr": "src/DocSSR.tsx",
       index: "src/index.ts",
     },
@@ -17,6 +17,4 @@ export default defineConfig([
     target: "es2020",
     external: ["react", "react-dom", "next", "framer-motion"],
   },
-  // wrappers (optionnel si tu les génères en postbuild)
-  // ou garde ton script postbuild qui écrit dist/client/index.(mjs|cjs) avec "use client"
 ]);

@@ -15,4 +15,4 @@ fs.writeFileSync(
 module.exports = require("../src/DocClient.cjs");
 `
 );
-console.log("[postbuild] client wrapper created ✔");
+console.log("[postbuild] client wrapper -> src/DocClient.(mjs|cjs)");
