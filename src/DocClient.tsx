@@ -258,7 +258,7 @@ export function DocClient({
       >
         <div className="z-10 w-full md:w-1/4 sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
           <aside
-            className={`w-full sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+            className={`w-full sticky md:max-w-[420px] top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
             }  rounded-xl p-4  backdrop-blur shadow-sm ${
               summaryClassName ?? ""
@@ -287,9 +287,9 @@ export function DocClient({
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="lucide lucide-x-icon lucide-x"
                   >
                     <path d="M18 6 6 18" />
