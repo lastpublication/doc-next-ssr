@@ -11,10 +11,7 @@ export default defineConfig([
     sourcemap: true,
   },
   {
-    entry: {
-      "client/index": "src/client/index.ts",
-      DocClient: "src/DocClient.tsx",
-    },
+    entry: { "client/index": "src/client/index.ts" },
     dts: true,
     format: ["esm"],
     outDir: "dist",
@@ -22,7 +19,7 @@ export default defineConfig([
     treeshake: true,
     sourcemap: true,
     banner: { js: '"use client";' },
-    bundle: false,
+    bundle: true, // ⬅️ EMBARQUE DocClient + utils => plus d’imports relatifs
     splitting: false,
     minify: false,
   },
