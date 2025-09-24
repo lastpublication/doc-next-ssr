@@ -1,10 +1,8 @@
-// tsup.config.ts
 import { defineConfig } from "tsup";
 
 export default defineConfig([
-  // Build CLIENT: injecte "use client"
   {
-    entry: { "components/DocClient": "src/DocClient.tsx" },
+    entry: { client: "src/DocClient.entry.ts" },
     format: ["esm", "cjs"],
     dts: true,
     sourcemap: true,
@@ -13,14 +11,9 @@ export default defineConfig([
     treeshake: true,
     target: "es2020",
     external: ["react", "react-dom", "next", "framer-motion"],
-    banner: { js: '"use client";' }, // 👈 ligne 1 assurée
   },
-  // Build SSR + index (pas de "use client")
   {
-    entry: {
-      "components/DocSSR": "src/DocSSR.tsx",
-      index: "src/index.ts",
-    },
+    entry: { ssr: "src/DocSSR.tsx", index: "src/index.ts" },
     format: ["esm", "cjs"],
     dts: true,
     sourcemap: true,
