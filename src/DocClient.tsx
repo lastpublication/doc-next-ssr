@@ -256,9 +256,12 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div className="z-10 w-full md:w-1/4 sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
+        <div
+          className="z-10 w-full  sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2"
+          style={{ maxWidth: "320px" }}
+        >
           <aside
-            className={`w-full sticky md:max-w-[420px] top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+            className={`w-full sticky  top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
             }  rounded-xl p-4  backdrop-blur shadow-sm ${
               summaryClassName ?? ""
