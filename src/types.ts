@@ -6,6 +6,10 @@ export interface DocDocument {
   /**
    * Optional short description rendered as a paragraph under the title.
    */
+  img?: string;
+  /**
+   * Optional short description rendered as a paragraph under the title.
+   */
   description?: string;
   /**
    * Sections that compose the documentation.
@@ -21,24 +25,24 @@ export type DocBlock =
   | DocHtmlBlock;
 
 export interface DocParagraphBlock {
-  kind: 'paragraph';
+  kind: "paragraph";
   text: string;
 }
 
 export interface DocListBlock {
-  kind: 'list';
+  kind: "list";
   ordered?: boolean;
   items: string[];
 }
 
 export interface DocCodeBlock {
-  kind: 'code';
+  kind: "code";
   code: string;
   language?: string;
 }
 
 export interface DocHtmlBlock {
-  kind: 'html';
+  kind: "html";
   html: string;
 }
 
@@ -70,4 +74,3 @@ export interface FlattenedSection {
   title: string;
   level: number;
 }
-

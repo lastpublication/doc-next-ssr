@@ -1,7 +1,8 @@
 {
-  "name": "@todo/doc-next-ssr",
+  "name": "@lastbrain/doc-next-ssr",
   "version": "0.1.0",
   "description": "Next.js documentation renderer with SSR and client enhancement",
+  "license": "MIT",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -14,14 +15,14 @@
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
+    "framer-motion": "^10.0.0",
     "next": "^13.4.0 || ^14.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "framer-motion": "^10.0.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
     "tsup": "^7.2.0",
     "typescript": "^5.4.0"
   }

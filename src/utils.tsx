@@ -1,6 +1,11 @@
-import type { DocBlock, DocDocument, DocSection, FlattenedSection } from './types';
+import type {
+  DocBlock,
+  DocDocument,
+  DocSection,
+  FlattenedSection,
+} from "./types";
 
-export const DEFAULT_SSR_ID = 'doc-ssr-root';
+export const DEFAULT_SSR_ID = "doc-ssr-root";
 
 export function normalizeLevel(level?: number): number {
   if (!level) return 2;
@@ -9,8 +14,11 @@ export function normalizeLevel(level?: number): number {
   return Math.round(level);
 }
 
-export function resolveSectionLevel(section: DocSection, parentLevel?: number): number {
-  const fallback = typeof parentLevel === 'number' ? parentLevel + 1 : 2;
+export function resolveSectionLevel(
+  section: DocSection,
+  parentLevel?: number
+): number {
+  const fallback = typeof parentLevel === "number" ? parentLevel + 1 : 2;
   return normalizeLevel(section.level ?? fallback);
 }
 
@@ -32,14 +40,14 @@ export function flattenSections(doc: DocDocument): FlattenedSection[] {
 }
 
 export function renderBlock(block: DocBlock, key: number): JSX.Element {
-  if (typeof block === 'string') {
+  if (typeof block === "string") {
     return <p key={key}>{block}</p>;
   }
 
   switch (block.kind) {
-    case 'paragraph':
+    case "paragraph":
       return <p key={key}>{block.text}</p>;
-    case 'list':
+    case "list":
       if (!block.items.length) {
         return <></>;
       }
@@ -59,13 +67,22 @@ export function renderBlock(block: DocBlock, key: number): JSX.Element {
           ))}
         </ul>
       );
-    case 'code':
+    case "code":
       return (
-        <pre key={key} className="bg-slate-900 text-slate-50 rounded-lg p-4 overflow-auto text-sm">
-          <code className={block.language ? `language-${block.language}` : undefined}>{block.code}</code>
+        <pre
+          key={key}
+          className="dark:bg-stone-950 border bg-stone-200 border-gray-300 dark:border-stone-800 dark:text-stone-50 text-stone-950 shadow-sm rounded-lg p-4 overflow-auto text-sm"
+        >
+          <code
+            className={
+              block.language ? `language-${block.language}` : undefined
+            }
+          >
+            {block.code}
+          </code>
         </pre>
       );
-    case 'html':
+    case "html":
       return <div key={key} dangerouslySetInnerHTML={{ __html: block.html }} />;
     default:
       return <></>;
@@ -73,6 +90,6 @@ export function renderBlock(block: DocBlock, key: number): JSX.Element {
 }
 
 export function ensureArray<T>(value: T | T[] | undefined): T[] {
-  if (typeof value === 'undefined') return [];
+  if (typeof value === "undefined") return [];
   return Array.isArray(value) ? value : [value];
 }

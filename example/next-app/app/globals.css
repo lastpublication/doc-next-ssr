@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+a {
+  @apply text-sky-600 underline-offset-4 hover:underline;
+}
+
+main {
+  @apply container mx-auto px-6 py-12;
+}

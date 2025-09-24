@@ -30,40 +30,40 @@ La bibliothèque exploite les classes Tailwind CSS. Pour une personnalisation co
 La documentation se base sur un objet `DocDocument` typé. Voici le format attendu :
 
 ```ts
-import type { DocDocument } from '<votre-nom-de-package>';
+import type { DocDocument } from "<votre-nom-de-package>";
 
 const doc: DocDocument = {
-  title: 'Mon API',
-  description: 'Une description rapide de la ressource.',
+  title: "Mon API",
+  description: "Une description rapide de la ressource.",
   sections: [
     {
-      id: 'introduction',
-      title: 'Introduction',
+      id: "introduction",
+      title: "Introduction",
       level: 2, // optionnel (valeur par défaut : 2)
       content: [
-        'Bloc de texte en string',
-        { kind: 'paragraph', text: 'Un autre paragraphe.' },
+        "Bloc de texte en string",
+        { kind: "paragraph", text: "Un autre paragraphe." },
         {
-          kind: 'list',
+          kind: "list",
           ordered: false,
-          items: ['Élément A', 'Élément B'],
+          items: ["Élément A", "Élément B"],
         },
         {
-          kind: 'code',
-          language: 'ts',
+          kind: "code",
+          language: "ts",
           code: 'console.log("hello")',
         },
         {
-          kind: 'html',
-          html: '<strong>HTML contrôlé par vos soins</strong>',
+          kind: "html",
+          html: "<strong>HTML contrôlé par vos soins</strong>",
         },
       ],
       children: [
         {
-          id: 'introduction-exemple',
-          title: 'Exemple',
+          id: "introduction-exemple",
+          title: "Exemple",
           level: 3,
-          content: ['Les sections imbriquées sont supportées.'],
+          content: ["Les sections imbriquées sont supportées."],
         },
       ],
     },
@@ -84,10 +84,10 @@ Dans un composant marqué `"use server"`, récupérez la documentation (via `fet
 
 ```tsx
 // app/docs/page.tsx
-'use server';
+"use server";
 
-import { DocSSR } from '<votre-nom-de-package>';
-import { getDoc } from '@/lib/get-doc';
+import { DocSSR } from "<votre-nom-de-package>";
+import { getDoc } from "@/lib/get-doc";
 
 export default async function DocsPage() {
   const doc = await getDoc();
@@ -104,10 +104,10 @@ Dans un composant client, réutilisez la même donnée et rendez `DocClient`. Le
 
 ```tsx
 // app/docs/client.tsx
-'use client';
+"use client";
 
-import { DocClient } from '<votre-nom-de-package>';
-import type { DocDocument } from '<votre-nom-de-package>';
+import { DocClient } from "<votre-nom-de-package>";
+import type { DocDocument } from "<votre-nom-de-package>";
 
 export function DocsClient({ doc }: { doc: DocDocument }) {
   return <DocClient doc={doc} />;
@@ -118,9 +118,9 @@ Ensuite, combinez les deux dans votre page :
 
 ```tsx
 // app/docs/page.tsx
-import { DocClient, DocSSR } from '<votre-nom-de-package>';
-import { DocsClient } from './client';
-import { getDoc } from '@/lib/get-doc';
+import { DocClient, DocSSR } from "<votre-nom-de-package>";
+import { DocsClient } from "./client";
+import { getDoc } from "@/lib/get-doc";
 
 export default async function DocsPage() {
   const doc = await getDoc();
@@ -146,34 +146,13 @@ export default async function DocsPage() {
 
 Les composants acceptent plusieurs props optionnelles :
 
-| Prop | Composant | Description |
-| --- | --- | --- |
-| `className` | `DocSSR`, `DocClient` | Classes supplémentaires sur le conteneur principal. |
-| `visuallyHidden` | `DocSSR` | Rend la version SSR invisible pour les utilisateurs (utile si vous affichez immédiatement la version client) tout en restant accessible aux robots. |
-| `summaryClassName` | `DocClient` | Classes additionnelles sur la colonne du sommaire. |
-| `articleClassName` | `DocClient` | Classes additionnelles sur la colonne principale. |
-| `smoothScroll` | `DocClient` | Active/désactive le scroll doux (`true` par défaut). |
-| `ssrId` | `DocClient` | ID de l'élément SSR à masquer lorsqu'on passe au rendu client. |
+| Prop               | Composant             | Description                                                                                                                                         |
+| ------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `className`        | `DocSSR`, `DocClient` | Classes supplémentaires sur le conteneur principal.                                                                                                 |
+| `visuallyHidden`   | `DocSSR`              | Rend la version SSR invisible pour les utilisateurs (utile si vous affichez immédiatement la version client) tout en restant accessible aux robots. |
+| `summaryClassName` | `DocClient`           | Classes additionnelles sur la colonne du sommaire.                                                                                                  |
+| `articleClassName` | `DocClient`           | Classes additionnelles sur la colonne principale.                                                                                                   |
+| `smoothScroll`     | `DocClient`           | Active/désactive le scroll doux (`true` par défaut).                                                                                                |
+| `ssrId`            | `DocClient`           | ID de l'élément SSR à masquer lorsqu'on passe au rendu client.                                                                                      |
 
 Vous pouvez surcharger librement les classes Tailwind (`bg-*`, `text-*`, `prose`, etc.). Pensez à ajouter les classes personnalisées dans la `safelist` de Tailwind le cas échéant.
-
-## Construction du package
-
-Un script de build via [tsup](https://tsup.egoist.dev/) est déjà configuré. Il produit des bundles ESM + CJS ainsi que les fichiers de types.
-
-```bash
-npm install
-npm run build
-```
-
-Le dossier publié sur npm ne doit contenir que le répertoire `dist` (déclaré dans le champ `files`).
-
-## Publication
-
-1. Mettez à jour `package.json` (nom, version, dépôt, mots-clés, etc.).
-2. Vérifiez que les tests/CI passent.
-3. Exécutez `npm publish --access public` depuis un dépôt propre.
-
-## Licence
-
-Définissez la licence adaptée à votre projet dans `package.json` et `LICENSE`.
