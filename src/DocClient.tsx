@@ -182,7 +182,7 @@ export function DocClient({
               const buttonId = `${section.id}-code-${index}`;
               return (
                 <div key={index} className="relative ">
-                  <pre className="bg-white dark:bg-black/70 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
+                  <pre className="bg-white dark:bg-black/30 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
                     <code
                       className={
                         codeBlock.language
@@ -198,7 +198,7 @@ export function DocClient({
                     onClick={() =>
                       handleCopyToClipboard(codeBlock.code, buttonId)
                     }
-                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 bg-white dark:bg-black/70  p-1 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-stone-600"
+                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 text-black dark:text-white bg-white dark:bg-black/30  p-1 rounded-lg text-sm hover:bg-white dark:hover:bg-black/60"
                     aria-label="Copier le code"
                   >
                     <svg
@@ -256,9 +256,9 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div className="z-50 max-w-md w-full md:w-1/4 md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 fixed">
+        <div className="z-10 max-w-md w-full md:w-1/4 md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 fixed">
           <aside
-            className={`lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+            className={`sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
             }  rounded-xl p-4  backdrop-blur shadow-sm ${
               summaryClassName ?? ""
@@ -356,7 +356,7 @@ export function DocClient({
         </div>
 
         <motion.article
-          className={`pt-24 flex-1 md:pt-0 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
+          className={`pt-24 md:pt-0  flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
             articleClassName ?? ""
           }`}
           initial="hidden"
@@ -364,7 +364,7 @@ export function DocClient({
           variants={fadeIn}
           transition={{ duration: 0.4 }}
         >
-          <header className="space-y-4 text-center pb-24">
+          <header className="space-y-4 text-center pb-24 ">
             <img src={doc?.img} alt="" className="mx-auto h-auto w-16" />
             <h1 className="text-4xl font-bold tracking-tight text-stone-950 dark:text-stone-50 text-balance">
               {doc.title}
