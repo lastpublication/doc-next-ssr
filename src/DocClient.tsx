@@ -256,9 +256,9 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div className="z-50 w-full lg:w-1/4  fixed lg:sticky lg:h-[calc(100vh-8rem)]  lg:top-24 left-0  p-4 ">
+        <div className="z-50 w-full md:w-1/4 fixed md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 ">
           <aside
-            className={`    lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+            className={`lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
             }  rounded-xl p-4  backdrop-blur shadow-sm ${
               summaryClassName ?? ""
@@ -332,7 +332,7 @@ export function DocClient({
                 return (
                   <div
                     key={section.id}
-                    className="flex flex-col gap-1 hover:scale-105 active:scale-95 transition-all"
+                    className="flex flex-col gap-1 md:hover:scale-105 active:scale-95 transition-all"
                     style={{ paddingLeft: indent ? `${indent}px` : undefined }}
                   >
                     <button
