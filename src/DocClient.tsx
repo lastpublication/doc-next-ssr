@@ -166,14 +166,14 @@ export function DocClient({
         <motion.section
           key={section.id}
           id={section.id}
-          className="scroll-mt-24 space-y-4"
+          className="scroll-mt-24 space-y-4 p-4 bg-white border border-stone-200 dark:border-stone-700 dark:bg-black/20 rounded-xl shadow-sm"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeIn}
           transition={{ duration: 0.4 }}
         >
-          <Heading className="font-semibold text-slate-900 dark:text-slate-100 text-balance">
+          <Heading className="mt-0 text-3xl font-semibold text-slate-900 dark:text-slate-100 text-balance">
             {section.title}
           </Heading>
           {section.content?.map((block, index) => {
@@ -182,7 +182,7 @@ export function DocClient({
               const buttonId = `${section.id}-code-${index}`;
               return (
                 <div key={index} className="relative ">
-                  <pre className="bg-white dark:bg-black/30 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
+                  <pre className="bg-stone-100 dark:bg-black/30 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
                     <code
                       className={
                         codeBlock.language
@@ -256,13 +256,10 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div
-          className="z-10 w-full  sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2"
-          style={{ maxWidth: "320px" }}
-        >
+        <div className="z-10 w-full md:max-w-[380px] sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
           <aside
             className={`w-full sticky  top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
-              summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
+              summaryOpen ? `dark:bg-black/70` : `dark:bg-black/70`
             }  rounded-xl p-4  backdrop-blur shadow-sm ${
               summaryClassName ?? ""
             }`}
@@ -342,7 +339,7 @@ export function DocClient({
                       type="button"
                       onClick={() => handleNavigate(section.id)}
                       className={`${
-                        summaryOpen ? `text-lg` : `text-sm`
+                        summaryOpen ? `text-lg` : `text-md`
                       } text-left transition  hover:text-black dark:hover:text-white ${
                         activeId === section.id
                           ? "text-stone-700 dark:text-gray-100 font-bold text-lg"
@@ -359,7 +356,7 @@ export function DocClient({
         </div>
 
         <motion.article
-          className={`pt-24 md:pt-0  flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
+          className={`pt-24 md:pt-0 py-5  flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
             articleClassName ?? ""
           }`}
           initial="hidden"
@@ -367,7 +364,7 @@ export function DocClient({
           variants={fadeIn}
           transition={{ duration: 0.4 }}
         >
-          <header className="space-y-4 text-center pb-24 ">
+          <header className="space-y-4 text-center pb-12 ">
             <img src={doc?.img} alt="" className="mx-auto h-auto w-16" />
             <h1 className="text-4xl font-bold tracking-tight text-stone-950 dark:text-stone-50 text-balance">
               {doc.title}
