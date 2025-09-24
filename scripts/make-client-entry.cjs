@@ -2,11 +2,11 @@ const fs = require("fs");
 const p = "dist/client/index.mjs";
 let s = fs.readFileSync(p, "utf8");
 
-// insère la directive si elle n'est pas déjà en 1ère ligne
-if (!s.startsWith('"use client";')) {
-  s = '"use client";\n' + s;
-  fs.writeFileSync(p, s);
-  console.log('[ensure-use-client] added "use client" to', p);
-} else {
-  console.log('[ensure-use-client] already present in', p);
-}
+// 1) ensure "use client";
+if (!s.startsWith('"use client";')) s = '"use client";\n' + s;
+
+// 2) add extension for ESM strict resolvers
+s = s.replace(/from\s+['"]\.\.\/DocClient['"];/, "from '../DocClient.mjs';");
+
+fs.writeFileSync(p, s);
+console.log("[patch-client-entry] Patched", p);

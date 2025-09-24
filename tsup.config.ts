@@ -11,21 +11,20 @@ export default defineConfig([
     sourcemap: true,
   },
   {
-    entry: { "client/index": "src/client/index.ts" },
+    entry: {
+      "client/index": "src/client/index.ts",
+      DocClient: "src/DocClient.tsx",
+    },
     dts: true,
     format: ["esm"],
     outDir: "dist",
     clean: false,
     treeshake: true,
     sourcemap: true,
+    banner: { js: '"use client";' },
     bundle: false,
     splitting: false,
     minify: false,
-    banner: { js: '"use client";' },
-    esbuildOptions(options) {
-      options.banner = options.banner || {};
-      options.banner.js = '"use client";';
-    },
   },
   {
     entry: { "server/index": "src/server/index.ts" },
