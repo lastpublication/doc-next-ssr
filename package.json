@@ -1,6 +1,6 @@
 {
   "name": "@lastbrain/doc-next-ssr",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Next.js documentation renderer with SSR and client enhancement",
   "license": "MIT",
   "main": "dist/index.cjs",
@@ -10,12 +10,23 @@
   "files": [
     "dist"
   ],
-
   "exports": {
-  ".": { "import": "./dist/index.mjs", "require": "./dist/index.cjs", "types": "./dist/index.d.ts" },
-  "./client": { "import": "./dist/components/DocClient.mjs", "require": "./dist/components/DocClient.cjs", "types": "./dist/components/DocClient.d.ts" },
-  "./ssr":    { "import": "./dist/components/DocSSR.mjs",   "require": "./dist/components/DocSSR.cjs",   "types": "./dist/components/DocSSR.d.ts" }
-},
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/components/DocClient.mjs",
+      "require": "./dist/components/DocClient.cjs",
+      "types": "./dist/components/DocClient.d.ts"
+    },
+    "./ssr": {
+      "import": "./dist/components/DocSSR.mjs",
+      "require": "./dist/components/DocSSR.cjs",
+      "types": "./dist/components/DocSSR.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist"
