@@ -182,7 +182,7 @@ export function DocClient({
               const buttonId = `${section.id}-code-${index}`;
               return (
                 <div key={index} className="relative ">
-                  <pre className="bg-gray-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
+                  <pre className="bg-white dark:bg-black/70 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
                     <code
                       className={
                         codeBlock.language
@@ -256,7 +256,7 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div className="z-50 w-full md:w-1/4 fixed md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 ">
+        <div className="z-50 max-w-md w-full md:w-1/4 fixed md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 ">
           <aside
             className={`lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
