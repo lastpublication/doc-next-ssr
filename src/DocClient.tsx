@@ -33,6 +33,10 @@ export interface DocClientProps {
    */
   articleClassName?: string;
   /**
+   * Class names applied to the section elements.
+   */
+  SectionClassName?: string;
+  /**
    * Toggle smooth scroll behavior.
    */
   smoothScroll?: boolean;
@@ -49,6 +53,7 @@ export function DocClient({
   className,
   summaryClassName,
   articleClassName,
+  SectionClassName,
   smoothScroll = true,
 }: DocClientProps) {
   const sections = useMemo(() => flattenSections(doc), [doc]);
@@ -166,7 +171,7 @@ export function DocClient({
         <motion.section
           key={section.id}
           id={section.id}
-          className="scroll-mt-24 space-y-4 p-4 bg-white border border-stone-200 dark:border-stone-700 dark:bg-black/20 rounded-xl shadow-sm"
+          className={` ${SectionClassName} scroll-mt-24 space-y-4 p-4 bg-white border border-stone-200 dark:border-stone-700 dark:bg-black/20 rounded-xl shadow-sm`}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
