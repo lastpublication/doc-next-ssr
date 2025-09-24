@@ -244,111 +244,119 @@ export function DocClient({
     <motion.section
       key={doc.title}
       id={doc.title}
-      className="scroll-mt-12 space-y-4"
+      className="scroll-mt-12 space-y-4 w-full"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeIn}
       transition={{ duration: 0.4 }}
     >
-      <div className={`flex flex-col gap-8 lg:flex-row ${className ?? ""}`}>
-        <aside
-          className={`lg:w-1/4 lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto border border-stone-300 dark:border-stone-700 bg-gray-200 dark:bg-stone-950 rounded-xl p-4  backdrop-blur shadow-sm ${
-            summaryClassName ?? ""
-          }`}
-        >
-          <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-start">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-stone-900 dark:text-stone-100">
-                Sommaire
-              </p>
-              <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-                {doc.title}
-              </h2>
-            </div>
-            <button
-              type="button"
-              className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 bg-white dark:bg-stone-950 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
-              onClick={() => setSummaryOpen((value) => !value)}
-              aria-expanded={summaryOpen}
-            >
-              {summaryOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="lucide lucide-x-icon lucide-x"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  width="24"
-                  height="24"
-                  aria-hidden
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-              {summaryOpen ? "Fermer" : "Menu"}
-            </button>
-          </div>
-
-          <motion.nav
-            aria-label="Sommaire"
-            className={`ps-5 mt-4  text-sm ${
-              summaryOpen ? "block space-y-4 " : "space-y-2  hidden lg:block "
+      <div
+        className={`top-10 w-full flex flex-col gap-8 lg:flex-row ${
+          className ?? ""
+        }`}
+      >
+        <div className="z-50 w-full lg:w-1/4  fixed lg:sticky lg:h-[calc(100vh-8rem)]  lg:top-24 left-0  p-4 ">
+          <aside
+            className={`    lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+              summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
+            }  rounded-xl p-4  backdrop-blur shadow-sm ${
+              summaryClassName ?? ""
             }`}
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ duration: 0.3 }}
           >
-            {sections.map((section) => {
-              const indent = Math.max(0, (section.level - 2) * 12);
-              return (
-                <div
-                  key={section.id}
-                  className="flex flex-col gap-1 hover:scale-105 active:scale-95 transition-all"
-                  style={{ paddingLeft: indent ? `${indent}px` : undefined }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate(section.id)}
-                    className={`${
-                      summaryOpen ? `text-lg` : `text-sm`
-                    } text-left transition  hover:text-black dark:hover:text-yellow-400 ${
-                      activeId === section.id
-                        ? "text-stone-700 dark:text-gray-200 font-bold text-lg"
-                        : "text-stone-600 dark:text-stone-500 "
-                    }`}
+            <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-stone-900 dark:text-stone-100">
+                  Sommaire
+                </p>
+                <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
+                  {doc.title}
+                </h2>
+              </div>
+              <button
+                type="button"
+                className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 bg-white dark:bg-stone-950 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
+                onClick={() => setSummaryOpen((value) => !value)}
+                aria-expanded={summaryOpen}
+              >
+                {summaryOpen ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="lucide lucide-x-icon lucide-x"
                   >
-                    {activeId === section.id && "•"} {section.title}
-                  </button>
-                </div>
-              );
-            })}
-          </motion.nav>
-        </aside>
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    width="24"
+                    height="24"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                )}
+                {summaryOpen ? "Fermer" : "Menu"}
+              </button>
+            </div>
+
+            <motion.nav
+              aria-label="Sommaire"
+              className={`ps-5 mt-4  text-sm ${
+                summaryOpen ? "block space-y-4 " : "space-y-2  hidden lg:block "
+              }`}
+              initial="hidden"
+              animate="visible"
+              variants={fadeIn}
+              transition={{ duration: 0.3 }}
+            >
+              {sections.map((section) => {
+                const indent = Math.max(0, (section.level - 2) * 12);
+                return (
+                  <div
+                    key={section.id}
+                    className="flex flex-col gap-1 hover:scale-105 active:scale-95 transition-all"
+                    style={{ paddingLeft: indent ? `${indent}px` : undefined }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate(section.id)}
+                      className={`${
+                        summaryOpen ? `text-lg` : `text-sm`
+                      } text-left transition  hover:text-black dark:hover:text-white ${
+                        activeId === section.id
+                          ? "text-stone-700 dark:text-gray-100 font-bold text-lg"
+                          : "text-stone-600 dark:text-stone-300 "
+                      }`}
+                    >
+                      {activeId === section.id && "•"} {section.title}
+                    </button>
+                  </div>
+                );
+              })}
+            </motion.nav>
+          </aside>
+        </div>
 
         <motion.article
-          className={`lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
+          className={`pt-24 flex-1 md:pt-0 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
             articleClassName ?? ""
           }`}
           initial="hidden"

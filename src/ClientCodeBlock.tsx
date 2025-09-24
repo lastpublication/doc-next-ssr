@@ -13,7 +13,7 @@ const ClientCodeBlock: React.FC<ClientCodeBlockProps> = ({
 }) => {
   return (
     <div className="relative">
-      <pre className="bg-gray-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
+      <pre className="black/10 dark:bg-black/20 border border-stone-200 dark:border-stone-950 text-black dark:text-white p-4 shadow-sm rounded-lg">
         <code className={language ? `language-${language}` : undefined}>
           {code}
         </code>
