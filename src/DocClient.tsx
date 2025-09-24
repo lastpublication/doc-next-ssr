@@ -256,9 +256,9 @@ export function DocClient({
           className ?? ""
         }`}
       >
-        <div className="z-10 max-w-md w-full md:w-1/4 md:sticky md:h-[calc(100vh-8rem)] md:top-24 left-0 p-4 fixed">
+        <div className="z-10 w-full md:w-1/4 sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
           <aside
-            className={`sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+            className={`w-full sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
               summaryOpen ? `dark:bg-black/60` : `dark:bg-black/10`
             }  rounded-xl p-4  backdrop-blur shadow-sm ${
               summaryClassName ?? ""
@@ -275,7 +275,7 @@ export function DocClient({
               </div>
               <button
                 type="button"
-                className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 bg-white dark:bg-stone-950 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
+                className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 bg-white dark:bg-black/70 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
                 onClick={() => setSummaryOpen((value) => !value)}
                 aria-expanded={summaryOpen}
               >

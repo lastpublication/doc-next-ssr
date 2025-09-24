@@ -8,7 +8,7 @@ export default async function Page() {
   const doc = await fetchDoc();
 
   return (
-    <div className="space-y-2 px-8">
+    <div className="space-y-2 md:px-8">
       <ToggleMode />
       <DocSSR doc={doc} visuallyHidden />
       <DocClient doc={doc} />
