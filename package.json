@@ -19,12 +19,18 @@
     "./client": {
       "import": "./dist/client.mjs",
       "require": "./dist/client.cjs",
-      "types": "./dist/client.d.ts"
+      "types": "./dist/src/client.d.ts" 
     },
     "./ssr": {
       "import": "./dist/ssr.mjs",
       "require": "./dist/ssr.cjs",
-      "types": "./dist/ssr.d.ts"
+      "types": "./dist/src/ssr.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "client": ["dist/src/client.d.ts"],
+      "ssr": ["dist/src/ssr.d.ts"]
     }
   },
   "scripts": {
