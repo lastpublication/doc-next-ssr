@@ -12,9 +12,9 @@ L'objectif est de pouvoir exposer une documentation complète à partir d'un sim
 ## Installation
 
 ```bash
-npm install <votre-nom-de-package>
+npm i @lastbrain/doc-next-ssr
 # ou
-pnpm add <votre-nom-de-package>
+pnpm add @lastbrain/doc-next-ssr
 ```
 
 Ajoutez également les peer dependencies dans votre projet si elles ne sont pas encore installées :
@@ -30,7 +30,7 @@ La bibliothèque exploite les classes Tailwind CSS. Pour une personnalisation co
 La documentation se base sur un objet `DocDocument` typé. Voici le format attendu :
 
 ```ts
-import type { DocDocument } from "<votre-nom-de-package>";
+import type { DocDocument } from "@lastbrain/doc-next-ssr";
 
 const doc: DocDocument = {
   title: "Mon API",
@@ -86,7 +86,7 @@ Dans un composant marqué `"use server"`, récupérez la documentation (via `fet
 // app/docs/page.tsx
 "use server";
 
-import { DocSSR } from "<votre-nom-de-package>";
+import { DocSSR } from "@lastbrain/doc-next-ssr";
 import { getDoc } from "@/lib/get-doc";
 
 export default async function DocsPage() {
@@ -106,8 +106,8 @@ Dans un composant client, réutilisez la même donnée et rendez `DocClient`. Le
 // app/docs/client.tsx
 "use client";
 
-import { DocClient } from "<votre-nom-de-package>";
-import type { DocDocument } from "<votre-nom-de-package>";
+import { DocClient } from "@lastbrain/doc-next-ssr";
+import type { DocDocument } from "@lastbrain/doc-next-ssr";
 
 export function DocsClient({ doc }: { doc: DocDocument }) {
   return <DocClient doc={doc} />;
@@ -118,7 +118,7 @@ Ensuite, combinez les deux dans votre page :
 
 ```tsx
 // app/docs/page.tsx
-import { DocClient, DocSSR } from "<votre-nom-de-package>";
+import { DocClient, DocSSR } from "@lastbrain/doc-next-ssr";
 import { DocsClient } from "./client";
 import { getDoc } from "@/lib/get-doc";
 
