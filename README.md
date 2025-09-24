@@ -1,7 +1,5 @@
 # Documentation SSR & Client Renderer for Next.js
 
-> ⚠️ Remplacez les métadonnées du `package.json` avant publication sur npm (nom, dépôt, mots-clés, auteur, licence...).
-
 Cette bibliothèque fournit deux composants complémentaires pour Next.js :
 
 - `DocSSR` : un rendu 100 % serveur taillé pour le SEO et les robots d'indexation. Il produit une structure HTML propre et accessible (`h1`, `h2`, `h3`, ancres `id`, liens internes…).
