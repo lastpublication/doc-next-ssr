@@ -5,7 +5,7 @@ import {
   renderBlock,
   resolveSectionLevel,
 } from "./utils";
-import { DocClient } from "./DocClient";
+// DocClient intentionally not imported here to keep this module server-only.
 
 export interface DocSSRProps {
   doc: DocDocument;
@@ -250,15 +250,7 @@ export function DocSSR({
           )}
         </article>
       </div>
-      <DocClient
-        doc={doc}
-        ssrId={id}
-        smoothScroll={smoothScroll}
-        className={className}
-        summaryClassName={summaryClassName}
-        articleClassName={articleClassName}
-        sectionClassName={sectionClassName}
-      />
+      {/* DocClient removed: keep DocSSR 100% server-side. Use ClientOnly + DocClient from the consumer app to mount the interactive version. */}
     </>
   );
 }
