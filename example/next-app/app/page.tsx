@@ -142,8 +142,7 @@ export default async function Page() {
       <ToggleMode />
       <div className="hidden md:max-w-[420px]" />
       <div className="md:px-8 space-y-2">
-        <DocSSR visuallyHidden={true} doc={gettingStartedDoc} />
-        <DocClient doc={gettingStartedDoc} />
+        <DocSSR doc={gettingStartedDoc} />
       </div>
     </>
   );

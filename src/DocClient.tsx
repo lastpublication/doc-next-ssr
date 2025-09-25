@@ -1,23 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { DocCodeBlock, DocDocument } from "./types";
-import {
-  DEFAULT_SSR_ID,
-  flattenSections,
-  renderBlock,
-  resolveSectionLevel,
-} from "./utils";
+import { useEffect, useMemo, useRef } from "react";
+import type { DocDocument } from "./types";
+import { DEFAULT_SSR_ID, flattenSections } from "./utils";
 
 export interface DocClientProps {
   doc: DocDocument;
   /**
-   * Identifier of the SSR element to hide once the client bundle is ready.
+   * Optional illustration displayed above the title.
    */
   img?: string;
   /**
-   * Identifier of the SSR element to hide once the client bundle is ready.
+   * Identifier of the SSR element rendered on the server. Kept for backward compatibility.
    */
   ssrId?: string;
   /**
@@ -42,338 +36,279 @@ export interface DocClientProps {
   smoothScroll?: boolean;
 }
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0 },
-};
+const SUMMARY_NAV_OPEN_CLASSES = ["block", "space-y-4"];
+const SUMMARY_NAV_CLOSED_CLASSES = ["hidden"];
+const SUMMARY_NAV_BASE_SPACING_CLASS = "space-y-2";
+const SUMMARY_LINK_INACTIVE_CLASSES = ["text-stone-600", "dark:text-stone-300"];
+const SUMMARY_LINK_ACTIVE_CLASSES = ["font-bold", "text-white", "dark:text-white"];
+const SECTION_HIDDEN_CLASSES = ["opacity-0", "translate-y-6"];
+const SECTION_VISIBLE_CLASSES = ["opacity-100", "translate-y-0"];
+const SECTION_TRANSITION_CLASSES = ["transition-all", "duration-500", "ease-out"];
+const TOOLTIP_HIDDEN_CLASSES = ["opacity-0", "translate-y-2"];
+const TOOLTIP_VISIBLE_CLASSES = ["opacity-100", "translate-y-0"];
 
 export function DocClient({
   doc,
   ssrId = DEFAULT_SSR_ID,
-  className,
-  summaryClassName,
-  articleClassName,
-  sectionClassName,
   smoothScroll = true,
 }: DocClientProps) {
   const sections = useMemo(() => flattenSections(doc), [doc]);
-  const [activeId, setActiveId] = useState<string | null>(
-    sections[0]?.id ?? null
-  );
-  const [summaryOpen, setSummaryOpen] = useState<boolean>(false);
-  const [tooltipVisibleId, setTooltipVisibleId] = useState<string | null>(null);
+  const closeMenuRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    const element = document.getElementById(ssrId);
-    if (!element) return;
-    const previousHidden = element.getAttribute("hidden");
-    const previousAria = element.getAttribute("aria-hidden");
-    const descendantsWithId = Array.from(
-      element.querySelectorAll<HTMLElement>("[id]")
-    ).map((node) => ({
-      node,
-      original: node.getAttribute("id"),
-    }));
+    if (typeof document === "undefined") return;
+    const root = document.querySelector<HTMLElement>(
+      `[data-doc-root="${ssrId}"]`
+    );
+    if (!root) return;
 
-    element.setAttribute("hidden", "true");
-    element.setAttribute("aria-hidden", "true");
-    descendantsWithId.forEach(({ node, original }) => {
-      if (original) {
-        node.setAttribute("data-doc-ssr-id", original);
-        node.removeAttribute("id");
+    const toggle = root.querySelector<HTMLButtonElement>(
+      `[data-doc-summary-toggle="${ssrId}"]`
+    );
+    const nav = root.querySelector<HTMLElement>(
+      `[data-doc-summary="${ssrId}"]`
+    );
+
+    if (!nav) return;
+
+    let isOpen = false;
+
+    const applyOpenState = (open: boolean) => {
+      isOpen = open;
+      toggle?.setAttribute("aria-expanded", open ? "true" : "false");
+
+      SUMMARY_NAV_CLOSED_CLASSES.forEach((cls) => {
+        if (open) {
+          nav.classList.remove(cls);
+        } else {
+          nav.classList.add(cls);
+        }
+      });
+
+      SUMMARY_NAV_OPEN_CLASSES.forEach((cls) => {
+        if (open) {
+          nav.classList.add(cls);
+        } else {
+          nav.classList.remove(cls);
+        }
+      });
+
+      if (open) {
+        nav.classList.remove(SUMMARY_NAV_BASE_SPACING_CLASS);
+      } else {
+        nav.classList.add(SUMMARY_NAV_BASE_SPACING_CLASS);
       }
-    });
+    };
+
+    const handleClick = () => {
+      applyOpenState(!isOpen);
+    };
+
+    toggle?.addEventListener("click", handleClick);
+    applyOpenState(false);
+
+    const closeMenu = () => applyOpenState(false);
+    closeMenuRef.current = closeMenu;
 
     return () => {
-      if (previousHidden === null) {
-        element.removeAttribute("hidden");
-      } else {
-        element.setAttribute("hidden", previousHidden);
+      toggle?.removeEventListener("click", handleClick);
+      if (closeMenuRef.current === closeMenu) {
+        closeMenuRef.current = null;
       }
-
-      if (previousAria === null) {
-        element.removeAttribute("aria-hidden");
-      } else {
-        element.setAttribute("aria-hidden", previousAria);
-      }
-
-      descendantsWithId.forEach(({ node, original }) => {
-        if (!node.isConnected) return;
-        if (original) {
-          node.setAttribute("id", original);
-        }
-        node.removeAttribute("data-doc-ssr-id");
-      });
     };
   }, [ssrId]);
 
   useEffect(() => {
-    if (!sections.length) return;
+    if (typeof document === "undefined") return;
+    const root = document.querySelector<HTMLElement>(
+      `[data-doc-root="${ssrId}"]`
+    );
+    if (!root) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: "-40% 0px -40% 0px",
-        threshold: 0.2,
-      }
+    const nav = root.querySelector<HTMLElement>(
+      `[data-doc-summary="${ssrId}"]`
     );
 
-    const observed: Element[] = [];
+    if (!nav) return;
+
+    const anchors = new Map<string, HTMLAnchorElement>();
     sections.forEach((section) => {
-      const el = document.getElementById(section.id);
-      if (el) {
-        observer.observe(el);
-        observed.push(el);
+      const anchor = nav.querySelector<HTMLAnchorElement>(
+        `[data-doc-summary-link="${section.id}"]`
+      );
+      if (anchor) {
+        anchors.set(section.id, anchor);
+        SUMMARY_LINK_INACTIVE_CLASSES.forEach((cls) =>
+          anchor.classList.add(cls)
+        );
       }
     });
 
-    return () => {
-      observed.forEach((el) => observer.unobserve(el));
-      observer.disconnect();
+    const setActive = (id: string | null) => {
+      anchors.forEach((anchor, key) => {
+        const isActive = key === id;
+        anchor.setAttribute("aria-current", isActive ? "true" : "false");
+        SUMMARY_LINK_ACTIVE_CLASSES.forEach((cls) =>
+          anchor.classList.toggle(cls, isActive)
+        );
+        SUMMARY_LINK_INACTIVE_CLASSES.forEach((cls) =>
+          anchor.classList.toggle(cls, !isActive)
+        );
+      });
     };
-  }, [sections]);
 
-  const handleNavigate = useCallback(
-    (id: string) => {
-      const element = document.getElementById(id);
-      if (!element) return;
-      if (smoothScroll) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        element.scrollIntoView();
-      }
-      setSummaryOpen(false);
-      setActiveId(id);
-    },
-    [smoothScroll]
-  );
-
-  const handleCopyToClipboard = useCallback((code: string, id: string) => {
-    navigator.clipboard.writeText(code);
-    setTooltipVisibleId(id);
-    setTimeout(() => setTooltipVisibleId(null), 2000);
-  }, []);
-
-  const renderClientSections = useCallback(() => {
-    const renderSection = (
-      section: DocDocument["sections"][number],
-      parentLevel?: number
-    ): JSX.Element => {
-      const level = resolveSectionLevel(section, parentLevel);
-      const Heading = `h${level}` as keyof JSX.IntrinsicElements;
-      return (
-        <motion.section
-          key={section.id}
-          id={section.id}
-          className={` ${
-            sectionClassName ?? ""
-          } scroll-mt-24 space-y-4 p-4  border border-stone-200 dark:border-stone-700  rounded-xl shadow-sm`}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeIn}
-          transition={{ duration: 0.4 }}
-        >
-          <Heading className="mt-0 text-3xl font-semibold text-slate-900 dark:text-slate-100 text-balance">
-            {section.title}
-          </Heading>
-          {section.content?.map((block, index) => {
-            if (typeof block !== "string" && block.kind === "code") {
-              const codeBlock = block as DocCodeBlock;
-              const buttonId = `${section.id}-code-${index}`;
-              return (
-                <div key={index} className="relative ">
-                  <pre className="bg-stone-100  border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
-                    <code
-                      className={
-                        codeBlock.language
-                          ? `language-${codeBlock.language}`
-                          : undefined
-                      }
-                    >
-                      {codeBlock.code}
-                    </code>
-                  </pre>
-                  <button
-                    id={buttonId}
-                    onClick={() =>
-                      handleCopyToClipboard(codeBlock.code, buttonId)
-                    }
-                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 text-black dark:text-white    p-1 rounded-lg text-sm hover: dark:hover:bg-black/60"
-                    aria-label="Copier le code"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-copy-icon lucide-copy"
-                    >
-                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                    </svg>
-                  </button>
-                  {tooltipVisibleId === buttonId && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-[-30px] right-2 bg-black text-white text-xs px-2 py-1 rounded"
-                    >
-                      Copié !
-                    </motion.div>
-                  )}
-                </div>
-              );
-            }
-            return renderBlock(block, index);
-          })}
-          {section.children?.map((child) => renderSection(child, level))}
-        </motion.section>
+    const handleAnchorClick = (event: MouseEvent) => {
+      event.preventDefault();
+      const anchor = event.currentTarget as HTMLAnchorElement;
+      const targetId = anchor.dataset.docSummaryLink;
+      if (!targetId) return;
+      const target = root.querySelector<HTMLElement>(
+        `[data-doc-section="${targetId}"]`
       );
+      if (!target) return;
+
+      if (smoothScroll && "scrollIntoView" in target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        target.scrollIntoView();
+      }
+
+      setActive(targetId);
+      closeMenuRef.current?.();
     };
 
-    return doc.sections.map((section) => renderSection(section));
-  }, [doc, handleCopyToClipboard, tooltipVisibleId]);
+    anchors.forEach((anchor) => {
+      anchor.addEventListener("click", handleAnchorClick);
+    });
 
-  return (
-    <div
-      className={`top-10 w-full flex flex-col gap-8 lg:flex-row ${
-        className ?? ""
-      }`}
-    >
-      <div className="z-10  sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
-        <aside
-          className={`w-full sticky  top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
-            summaryOpen ? `dark:bg-black/70` : `dark:bg-black/70`
-          }  rounded-xl p-4  backdrop-blur shadow-sm ${summaryClassName ?? ""}`}
-        >
-          <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-start">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-stone-900 dark:text-stone-100">
-                Sommaire
-              </p>
-              <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-                {doc.title}
-              </h2>
-            </div>
-            <button
-              type="button"
-              className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200  dark:bg-black/70 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
-              onClick={() => setSummaryOpen((value) => !value)}
-              aria-expanded={summaryOpen}
-            >
-              {summaryOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-x-icon lucide-x"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  width="24"
-                  height="24"
-                  aria-hidden
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-              {summaryOpen ? "Fermer" : "Menu"}
-            </button>
-          </div>
+    const sectionElements = sections
+      .map((section) =>
+        root.querySelector<HTMLElement>(
+          `[data-doc-section="${section.id}"]`
+        )
+      )
+      .filter((element): element is HTMLElement => Boolean(element));
 
-          <motion.nav
-            aria-label="Sommaire"
-            className={`ps-5 mt-4  text-sm ${
-              summaryOpen ? "block space-y-4 " : "space-y-2  hidden lg:block "
-            }`}
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ duration: 0.3 }}
-          >
-            {sections.map((section) => {
-              const indent = Math.max(0, (section.level - 2) * 12);
-              return (
-                <div
-                  key={section.id}
-                  className="flex flex-col gap-1 md:hover:scale-105 active:scale-95 transition-all"
-                  style={{ paddingLeft: indent ? `${indent}px` : undefined }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate(section.id)}
-                    className={`${
-                      summaryOpen ? `text-lg` : `text-md`
-                    } text-left transition  hover:text-black dark:hover:text-white ${
-                      activeId === section.id
-                        ? "text-stone-700 dark:text-gray-100 font-bold text-lg"
-                        : "text-stone-600 dark:text-stone-300 "
-                    }`}
-                  >
-                    {activeId === section.id && "•"} {section.title}
-                  </button>
-                </div>
-              );
-            })}
-          </motion.nav>
-        </aside>
-      </div>
+    sectionElements.forEach((element) => {
+      SECTION_TRANSITION_CLASSES.forEach((cls) => element.classList.add(cls));
+      SECTION_HIDDEN_CLASSES.forEach((cls) => element.classList.add(cls));
+    });
 
-      <motion.article
-        className={`pt-24 md:pt-0 py-5  flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
-          articleClassName ?? ""
-        }`}
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-        transition={{ duration: 0.4 }}
-      >
-        <header className="space-y-4 text-center pb-12 ">
-          <img src={doc?.img} alt="" className="mx-auto h-auto w-16" />
-          <h1 className="text-4xl font-bold tracking-tight text-stone-950 dark:text-stone-50 text-balance">
-            {doc.title}
-          </h1>
-          {doc.description ? (
-            <p className="text-lg text-stone-600 dark:text-stone-300">
-              {doc.description}
-            </p>
-          ) : null}
-        </header>
-        {renderClientSections()}
-      </motion.article>
-    </div>
-  );
+    const activeIdRef: { current: string | null } = {
+      current: sections[0]?.id ?? null,
+    };
+
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const element = entry.target as HTMLElement;
+          const id = element.dataset.docSection;
+          if (!id) return;
+
+          if (entry.isIntersecting) {
+            SECTION_VISIBLE_CLASSES.forEach((cls) =>
+              element.classList.add(cls)
+            );
+            SECTION_HIDDEN_CLASSES.forEach((cls) =>
+              element.classList.remove(cls)
+            );
+
+            if (entry.intersectionRatio >= 0.35) {
+              if (activeIdRef.current !== id) {
+                activeIdRef.current = id;
+                setActive(id);
+              }
+            }
+          }
+        });
+      },
+      { threshold: [0.1, 0.35, 0.6], rootMargin: "-40% 0px -40% 0px" }
+    );
+
+    sectionElements.forEach((element) =>
+      intersectionObserver.observe(element)
+    );
+
+    const initialHash = window.location.hash?.replace(/^#/, "");
+    if (initialHash && anchors.has(initialHash)) {
+      setActive(initialHash);
+    } else {
+      setActive(activeIdRef.current);
+    }
+
+    return () => {
+      anchors.forEach((anchor) =>
+        anchor.removeEventListener("click", handleAnchorClick)
+      );
+      intersectionObserver.disconnect();
+    };
+  }, [sections, smoothScroll, ssrId]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.querySelector<HTMLElement>(
+      `[data-doc-root="${ssrId}"]`
+    );
+    if (!root) return;
+
+    const buttons = Array.from(
+      root.querySelectorAll<HTMLButtonElement>("[data-doc-copy-button]")
+    );
+    if (!buttons.length) return;
+
+    const timeouts = new Map<string, number>();
+
+    const handleClick = (event: MouseEvent) => {
+      const button = event.currentTarget as HTMLButtonElement;
+      const code = button.dataset.docCopyCode;
+      const key = button.dataset.docCopyButton;
+      if (!code || !key) return;
+
+      if (!navigator?.clipboard?.writeText) return;
+
+      void navigator.clipboard.writeText(code).then(() => {
+        const tooltip = root.querySelector<HTMLElement>(
+          `[data-doc-copy-tooltip="${key}"]`
+        );
+        if (!tooltip) return;
+
+        TOOLTIP_HIDDEN_CLASSES.forEach((cls) =>
+          tooltip.classList.remove(cls)
+        );
+        TOOLTIP_VISIBLE_CLASSES.forEach((cls) => tooltip.classList.add(cls));
+
+        const previous = timeouts.get(key);
+        if (typeof previous === "number") {
+          window.clearTimeout(previous);
+        }
+
+        const timeoutId = window.setTimeout(() => {
+          TOOLTIP_VISIBLE_CLASSES.forEach((cls) =>
+            tooltip.classList.remove(cls)
+          );
+          TOOLTIP_HIDDEN_CLASSES.forEach((cls) =>
+            tooltip.classList.add(cls)
+          );
+        }, 2000);
+
+        timeouts.set(key, timeoutId);
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", handleClick);
+    });
+
+    return () => {
+      buttons.forEach((button) =>
+        button.removeEventListener("click", handleClick)
+      );
+      timeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      timeouts.clear();
+    };
+  }, [ssrId]);
+
+  return null;
 }
 
 export default DocClient;
