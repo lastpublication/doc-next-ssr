@@ -1,6 +1,6 @@
 {
   "name": "@lastbrain/doc-next-ssr",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "description": "Next.js documentation renderer with SSR and client enhancement",
   "license": "MIT",
   "main": "dist/index.cjs",
