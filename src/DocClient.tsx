@@ -173,7 +173,7 @@ export function DocClient({
           id={section.id}
           className={` ${
             sectionClassName ?? ""
-          } scroll-mt-24 space-y-4 p-4 bg-white border border-stone-200 dark:border-stone-700 dark:bg-black/20 rounded-xl shadow-sm`}
+          } scroll-mt-24 space-y-4 p-4  border border-stone-200 dark:border-stone-700  rounded-xl shadow-sm`}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -189,7 +189,7 @@ export function DocClient({
               const buttonId = `${section.id}-code-${index}`;
               return (
                 <div key={index} className="relative ">
-                  <pre className="bg-stone-100 dark:bg-black/30 border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
+                  <pre className="bg-stone-100  border border-stone-200 dark:border-stone-950 text-gray-950 dark:text-gray-50 p-4 shadow-sm rounded-lg">
                     <code
                       className={
                         codeBlock.language
@@ -205,7 +205,7 @@ export function DocClient({
                     onClick={() =>
                       handleCopyToClipboard(codeBlock.code, buttonId)
                     }
-                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 text-black dark:text-white bg-white dark:bg-black/30  p-1 rounded-lg text-sm hover:bg-white dark:hover:bg-black/60"
+                    className="active:scale-95 hover:scale-105 transition-all absolute top-2 right-2 text-black dark:text-white    p-1 rounded-lg text-sm hover: dark:hover:bg-black/60"
                     aria-label="Copier le code"
                   >
                     <svg
@@ -248,144 +248,131 @@ export function DocClient({
   }, [doc, handleCopyToClipboard, tooltipVisibleId]);
 
   return (
-    <motion.section
-      key={doc.title}
-      id={doc.title}
-      className="scroll-mt-12 space-y-4 w-full"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={fadeIn}
-      transition={{ duration: 0.4 }}
+    <div
+      className={`top-10 w-full flex flex-col gap-8 lg:flex-row ${
+        className ?? ""
+      }`}
     >
-      <div
-        className={`top-10 w-full flex flex-col gap-8 lg:flex-row ${
-          className ?? ""
-        }`}
-      >
-        <div className="z-10  sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
-          <aside
-            className={`w-full sticky  top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
-              summaryOpen ? `dark:bg-black/70` : `dark:bg-black/70`
-            }  rounded-xl p-4  backdrop-blur shadow-sm ${
-              summaryClassName ?? ""
-            }`}
-          >
-            <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-start">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-stone-900 dark:text-stone-100">
-                  Sommaire
-                </p>
-                <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-                  {doc.title}
-                </h2>
-              </div>
-              <button
-                type="button"
-                className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 bg-white dark:bg-black/70 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
-                onClick={() => setSummaryOpen((value) => !value)}
-                aria-expanded={summaryOpen}
-              >
-                {summaryOpen ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
+      <div className="z-10  sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
+        <aside
+          className={`w-full sticky  top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 black/10 bg-gray-50/60 ${
+            summaryOpen ? `dark:bg-black/70` : `dark:bg-black/70`
+          }  rounded-xl p-4  backdrop-blur shadow-sm ${summaryClassName ?? ""}`}
+        >
+          <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-start">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-stone-900 dark:text-stone-100">
+                Sommaire
+              </p>
+              <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
+                {doc.title}
+              </h2>
+            </div>
+            <button
+              type="button"
+              className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200  dark:bg-black/70 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm transition hover:bg-stone-50"
+              onClick={() => setSummaryOpen((value) => !value)}
+              aria-expanded={summaryOpen}
+            >
+              {summaryOpen ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-x-icon lucide-x"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  width="24"
+                  height="24"
+                  aria-hidden
+                >
+                  <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="lucide lucide-x-icon lucide-x"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    width="24"
-                    height="24"
-                    aria-hidden
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-                {summaryOpen ? "Fermer" : "Menu"}
-              </button>
-            </div>
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              )}
+              {summaryOpen ? "Fermer" : "Menu"}
+            </button>
+          </div>
 
-            <motion.nav
-              aria-label="Sommaire"
-              className={`ps-5 mt-4  text-sm ${
-                summaryOpen ? "block space-y-4 " : "space-y-2  hidden lg:block "
-              }`}
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-              transition={{ duration: 0.3 }}
-            >
-              {sections.map((section) => {
-                const indent = Math.max(0, (section.level - 2) * 12);
-                return (
-                  <div
-                    key={section.id}
-                    className="flex flex-col gap-1 md:hover:scale-105 active:scale-95 transition-all"
-                    style={{ paddingLeft: indent ? `${indent}px` : undefined }}
+          <motion.nav
+            aria-label="Sommaire"
+            className={`ps-5 mt-4  text-sm ${
+              summaryOpen ? "block space-y-4 " : "space-y-2  hidden lg:block "
+            }`}
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            transition={{ duration: 0.3 }}
+          >
+            {sections.map((section) => {
+              const indent = Math.max(0, (section.level - 2) * 12);
+              return (
+                <div
+                  key={section.id}
+                  className="flex flex-col gap-1 md:hover:scale-105 active:scale-95 transition-all"
+                  style={{ paddingLeft: indent ? `${indent}px` : undefined }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate(section.id)}
+                    className={`${
+                      summaryOpen ? `text-lg` : `text-md`
+                    } text-left transition  hover:text-black dark:hover:text-white ${
+                      activeId === section.id
+                        ? "text-stone-700 dark:text-gray-100 font-bold text-lg"
+                        : "text-stone-600 dark:text-stone-300 "
+                    }`}
                   >
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate(section.id)}
-                      className={`${
-                        summaryOpen ? `text-lg` : `text-md`
-                      } text-left transition  hover:text-black dark:hover:text-white ${
-                        activeId === section.id
-                          ? "text-stone-700 dark:text-gray-100 font-bold text-lg"
-                          : "text-stone-600 dark:text-stone-300 "
-                      }`}
-                    >
-                      {activeId === section.id && "•"} {section.title}
-                    </button>
-                  </div>
-                );
-              })}
-            </motion.nav>
-          </aside>
-        </div>
-
-        <motion.article
-          className={`pt-24 md:pt-0 py-5  flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
-            articleClassName ?? ""
-          }`}
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-          transition={{ duration: 0.4 }}
-        >
-          <header className="space-y-4 text-center pb-12 ">
-            <img src={doc?.img} alt="" className="mx-auto h-auto w-16" />
-            <h1 className="text-4xl font-bold tracking-tight text-stone-950 dark:text-stone-50 text-balance">
-              {doc.title}
-            </h1>
-            {doc.description ? (
-              <p className="text-lg text-stone-600 dark:text-stone-300">
-                {doc.description}
-              </p>
-            ) : null}
-          </header>
-          {renderClientSections()}
-        </motion.article>
+                    {activeId === section.id && "•"} {section.title}
+                  </button>
+                </div>
+              );
+            })}
+          </motion.nav>
+        </aside>
       </div>
-    </motion.section>
+
+      <motion.article
+        className={`pt-24 md:pt-0 py-5  flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert ${
+          articleClassName ?? ""
+        }`}
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        transition={{ duration: 0.4 }}
+      >
+        <header className="space-y-4 text-center pb-12 ">
+          <img src={doc?.img} alt="" className="mx-auto h-auto w-16" />
+          <h1 className="text-4xl font-bold tracking-tight text-stone-950 dark:text-stone-50 text-balance">
+            {doc.title}
+          </h1>
+          {doc.description ? (
+            <p className="text-lg text-stone-600 dark:text-stone-300">
+              {doc.description}
+            </p>
+          ) : null}
+        </header>
+        {renderClientSections()}
+      </motion.article>
+    </div>
   );
 }
 
