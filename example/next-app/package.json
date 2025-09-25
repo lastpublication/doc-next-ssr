@@ -1,6 +1,6 @@
 {
   "name": "example-next-app",
-  "private": true,
+
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -23,5 +23,6 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5"
-  }
+  },
+  "version": "0.0.1"
 }
