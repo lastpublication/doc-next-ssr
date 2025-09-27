@@ -42,10 +42,23 @@ export interface DocSSRProps {
 const levelToHeading = (level: number): keyof JSX.IntrinsicElements =>
   `h${level}` as keyof JSX.IntrinsicElements;
 
+const numberToAlpha = (n: number) => {
+  // 1 -> a, 2 -> b, ... 26 -> z, 27 -> aa
+  let s = "";
+  let num = n;
+  while (num > 0) {
+    num -= 1;
+    s = String.fromCharCode(97 + (num % 26)) + s;
+    num = Math.floor(num / 26);
+  }
+  return s;
+};
+
 const renderSection = (
   section: DocSection,
   sectionClassName: string | undefined,
-  parentLevel?: number
+  parentLevel?: number,
+  prefix?: string
 ): JSX.Element => {
   const level = resolveSectionLevel(section, parentLevel);
   const Heading = levelToHeading(level);
@@ -60,6 +73,7 @@ const renderSection = (
       } scroll-mt-24 space-y-4 p-4 border border-stone-200 dark:border-stone-700 rounded-xl shadow-sm bg-white/90 dark:bg-stone-900/40 backdrop-blur doc-section`}
     >
       <Heading className="mt-0 text-3xl font-semibold text-slate-900 dark:text-slate-100 text-balance">
+        {prefix ? `${prefix}. ` : ""}
         {section.title}
       </Heading>
       {section.content?.map((block, index) => {
@@ -115,9 +129,16 @@ const renderSection = (
 
         return renderBlock(block, index);
       })}
-      {section.children?.map((child) =>
-        renderSection(child, sectionClassName, level)
-      )}
+      {section.children?.map((child, childIndex) => {
+        // If parent prefix exists and is top-level numeric (no dots), use alpha suffix: 1a, 1b
+        const childPrefix = prefix
+          ? prefix.includes(".")
+            ? `${prefix}.${childIndex + 1}`
+            : `${prefix}${numberToAlpha(childIndex + 1)}`
+          : `${childIndex + 1}`;
+
+        return renderSection(child, sectionClassName, level, childPrefix);
+      })}
     </section>
   );
 };
@@ -135,9 +156,49 @@ export function DocSSR({
   const sections = flattenSections(doc);
   const activeId = sections[0]?.id ?? null;
 
+  // compute hierarchical prefixes for the flattened sections so the nav matches headings
+  const prefixes: Record<string, string> = {};
+  const counters: Record<number, number> = {};
+  sections.forEach((section, idx) => {
+    const lvl = section.level ?? 2;
+    counters[lvl] = (counters[lvl] ?? 0) + 1;
+    // reset deeper level counters
+    Object.keys(counters).forEach((k) => {
+      const kn = Number(k);
+      if (kn > lvl) delete counters[kn];
+    });
+
+    let prefix = "";
+    if (lvl === 2) {
+      prefix = `${counters[2]}`;
+    } else {
+      // find closest ancestor with smaller level
+      let ancestorPrefix = "";
+      for (let j = idx - 1; j >= 0; j--) {
+        const prev = sections[j];
+        if ((prev.level ?? 2) < lvl) {
+          ancestorPrefix = prefixes[prev.id];
+          break;
+        }
+      }
+      if (!ancestorPrefix) {
+        prefix = `${counters[lvl]}`;
+      } else {
+        if (ancestorPrefix.includes(".")) {
+          prefix = `${ancestorPrefix}.${counters[lvl]}`;
+        } else {
+          // immediate child of top-level -> alpha suffix
+          prefix = `${ancestorPrefix}${numberToAlpha(counters[lvl])}`;
+        }
+      }
+    }
+
+    prefixes[section.id] = prefix;
+  });
+
   const containerClassName = visuallyHidden
     ? `sr-only${className ? ` ${className}` : ""}`
-    : `top-10 w-full flex flex-col gap-8 lg:flex-row${
+    : `top-10 w-full flex flex-col gap-8 lg:flex-row lg:items-start${
         className ? ` ${className}` : ""
       }`;
 
@@ -148,9 +209,9 @@ export function DocSSR({
         suppressHydrationWarning
         data-doc-root={id}
       >
-        <div className="z-10 sticky md:h-[calc(100vh-8rem)] top-0 md:top-24 left-0 pt-2">
+        <div className="w-full lg:w-auto flex-none z-10 sticky lg:h-[calc(100vh-8rem)] top-0 lg:top-24 left-0 pt-2">
           <aside
-            className={`w-full sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 bg-gray-50/60 dark:bg-black/70 rounded-xl p-4 backdrop-blur shadow-sm${
+            className={`w-full lg:w-auto sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 bg-gray-50/60 dark:bg-black/70 rounded-xl p-4 backdrop-blur shadow-sm lg:max-w-[320px]${
               summaryClassName ? ` ${summaryClassName}` : ""
             }`}
           >
@@ -159,14 +220,11 @@ export function DocSSR({
                 <p className="text-xs uppercase tracking-wide text-stone-900 dark:text-stone-100">
                   Sommaire
                 </p>
-                <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-                  {doc.title}
-                </h2>
               </div>
               <button
                 type="button"
                 data-doc-summary-toggle={id}
-                className="md:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 dark:border-stone-700 bg-white/70 dark:bg-black/70 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm"
+                className="lg:hidden inline-flex items-center gap-2 rounded-md border border-stone-200 dark:border-stone-700 bg-white/70 dark:bg-black/70 px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-100 shadow-sm"
                 aria-expanded="false"
                 aria-controls={`${id}-summary`}
               >
@@ -195,9 +253,9 @@ export function DocSSR({
               aria-label="Sommaire"
               data-doc-summary={id}
               id={`${id}-summary`}
-              className="ps-5 mt-4 text-sm space-y-2 hidden md:block"
+              className=" mt-4 text-sm space-y-2 hidden lg:block"
             >
-              {sections.map((section) => {
+              {sections.map((section, index) => {
                 const indent = Math.max(0, (section.level - 2) * 12);
                 const isActive = activeId === section.id;
                 return (
@@ -209,14 +267,23 @@ export function DocSSR({
                     <a
                       href={`#${section.id}`}
                       data-doc-summary-link={section.id}
-                      className={`text-md ${
+                      className={`text-md !no-underline relative pl-6 flex items-center gap-1 min-w-0 ${
                         isActive
-                          ? "font-bold text-white dark:text-white"
+                          ? " text-stone-900 dark:text-white"
                           : "text-stone-600 dark:text-stone-300"
-                      } text-left transition hover:text-black dark:hover:text-white`}
+                      } text-left transition hover:underline hover:text-black dark:hover:text-white`}
                     >
-                      {isActive ? "• " : ""}
-                      {section.title}
+                      <span
+                        data-doc-summary-marker
+                        aria-hidden
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-center w-4 opacity-0 transition-opacity duration-200"
+                      >
+                        →
+                      </span>
+                      <span className="inline-block w-6 text-right">
+                        {prefixes[section.id]}.
+                      </span>
+                      <span className="ml-2 truncate">{section.title}</span>
                     </a>
                   </div>
                 );
@@ -227,7 +294,7 @@ export function DocSSR({
 
         <article
           id={id}
-          className={`pt-24 md:pt-0 py-5 flex-1 lg:w-3/4 space-y-10 prose prose-stone max-w-none dark:prose-invert${
+          className={`pt-24 md:pt-0 py-5 flex-1 space-y-10 prose prose-stone max-w-none dark:prose-invert${
             articleClassName ? ` ${articleClassName}` : ""
           }`}
         >
@@ -245,8 +312,8 @@ export function DocSSR({
             ) : null}
           </header>
 
-          {doc.sections.map((section) =>
-            renderSection(section, sectionClassName)
+          {doc.sections.map((section, index) =>
+            renderSection(section, sectionClassName, undefined, `${index + 1}`)
           )}
         </article>
       </div>

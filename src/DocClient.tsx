@@ -40,10 +40,18 @@ const SUMMARY_NAV_OPEN_CLASSES = ["block", "space-y-4"];
 const SUMMARY_NAV_CLOSED_CLASSES = ["hidden"];
 const SUMMARY_NAV_BASE_SPACING_CLASS = "space-y-2";
 const SUMMARY_LINK_INACTIVE_CLASSES = ["text-stone-600", "dark:text-stone-300"];
-const SUMMARY_LINK_ACTIVE_CLASSES = ["font-bold", "text-white", "dark:text-white"];
+const SUMMARY_LINK_ACTIVE_CLASSES = [
+  "font-bold",
+  "text-stone-900",
+  "dark:text-white",
+];
 const SECTION_HIDDEN_CLASSES = ["opacity-0", "translate-y-6"];
 const SECTION_VISIBLE_CLASSES = ["opacity-100", "translate-y-0"];
-const SECTION_TRANSITION_CLASSES = ["transition-all", "duration-500", "ease-out"];
+const SECTION_TRANSITION_CLASSES = [
+  "transition-all",
+  "duration-500",
+  "ease-out",
+];
 const TOOLTIP_HIDDEN_CLASSES = ["opacity-0", "translate-y-2"];
 const TOOLTIP_VISIBLE_CLASSES = ["opacity-100", "translate-y-0"];
 
@@ -54,6 +62,56 @@ export function DocClient({
 }: DocClientProps) {
   const sections = useMemo(() => flattenSections(doc), [doc]);
   const closeMenuRef = useRef<(() => void) | null>(null);
+  const headerOffsetRef = useRef<number>(96);
+
+  const detectHeaderOffset = () => {
+    if (typeof document === "undefined") return 96;
+
+    // allow CSS to define a custom offset via a root variable
+    try {
+      const cssVar = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--doc-header-offset");
+      const parsed = Number(cssVar);
+      if (!Number.isNaN(parsed) && parsed > 0) return Math.ceil(parsed);
+    } catch (e) {
+      /* ignore */
+    }
+
+    const selectors = [
+      "[data-doc-header]",
+      'header[role="banner"]',
+      "header",
+      ".site-header",
+      ".topbar",
+      ".navbar",
+      ".header",
+    ];
+
+    for (const sel of selectors) {
+      const el = document.querySelector<HTMLElement>(sel);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        if (r.height > 0) return Math.ceil(r.height);
+      }
+    }
+
+    // Fallback: scan for visible fixed/sticky elements pinned to the top
+    const all = Array.from(document.body.querySelectorAll<HTMLElement>("*"));
+    for (const el of all) {
+      try {
+        const style = getComputedStyle(el);
+        if (style.position === "fixed" || style.position === "sticky") {
+          const rect = el.getBoundingClientRect();
+          if (rect.height > 0 && rect.top <= 1) return Math.ceil(rect.height);
+        }
+      } catch (e) {
+        // skip elements that throw
+      }
+    }
+
+    return 96;
+  };
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -154,6 +212,13 @@ export function DocClient({
         SUMMARY_LINK_INACTIVE_CLASSES.forEach((cls) =>
           anchor.classList.toggle(cls, !isActive)
         );
+        const marker = anchor.querySelector<HTMLElement>(
+          "[data-doc-summary-marker]"
+        );
+        if (marker) {
+          marker.classList.toggle("opacity-100", isActive);
+          marker.classList.toggle("opacity-0", !isActive);
+        }
       });
     };
 
@@ -167,10 +232,17 @@ export function DocClient({
       );
       if (!target) return;
 
-      if (smoothScroll && "scrollIntoView" in target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      // compute header offset (detected on mount/resize and cached)
+      const headerOffset = headerOffsetRef.current ?? 96;
+      const targetRect = target.getBoundingClientRect();
+      const absoluteTop = targetRect.top + window.scrollY;
+
+      // Deterministic simple scroll: compute absolute top minus headerOffset
+      const scrollTop = Math.max(0, absoluteTop - headerOffset);
+      if (smoothScroll && typeof window.scrollTo === "function") {
+        window.scrollTo({ top: scrollTop, behavior: "smooth" });
       } else {
-        target.scrollIntoView();
+        window.scrollTo(0, scrollTop);
       }
 
       setActive(targetId);
@@ -181,11 +253,55 @@ export function DocClient({
       anchor.addEventListener("click", handleAnchorClick);
     });
 
+    // detect header offset initially and on resize/orientation change
+    const computeAndStore = () => {
+      try {
+        let offset = detectHeaderOffset();
+        // enforce a minimum offset on mobile viewports to ensure anchors are visible
+        const isMobile =
+          typeof window !== "undefined" && window.innerWidth <= 640;
+        const minMobileOffset = 300;
+        if (isMobile) {
+          offset = Math.max(offset, minMobileOffset);
+        }
+
+        headerOffsetRef.current = offset;
+
+        // expose as CSS variable for consumers and ensure each section uses it via scroll-margin-top
+        try {
+          document.documentElement.style.setProperty(
+            "--doc-header-offset",
+            `${offset}px`
+          );
+        } catch (e) {
+          /* ignore */
+        }
+
+        // apply scroll-margin-top to sections inside this root so scrollIntoView aligns correctly
+        try {
+          const sectionEls = Array.from(
+            root.querySelectorAll<HTMLElement>("[data-doc-section]")
+          );
+          sectionEls.forEach((el) => {
+            el.style.scrollMarginTop = `${offset}px`;
+          });
+        } catch (e) {
+          /* ignore */
+        }
+      } catch (e) {
+        headerOffsetRef.current =
+          typeof window !== "undefined" && window.innerWidth <= 640 ? 200 : 96;
+      }
+    };
+    computeAndStore();
+    window.addEventListener("resize", computeAndStore, { passive: true });
+    window.addEventListener("orientationchange", computeAndStore, {
+      passive: true,
+    });
+
     const sectionElements = sections
       .map((section) =>
-        root.querySelector<HTMLElement>(
-          `[data-doc-section="${section.id}"]`
-        )
+        root.querySelector<HTMLElement>(`[data-doc-section="${section.id}"]`)
       )
       .filter((element): element is HTMLElement => Boolean(element));
 
@@ -225,9 +341,7 @@ export function DocClient({
       { threshold: [0.1, 0.35, 0.6], rootMargin: "-40% 0px -40% 0px" }
     );
 
-    sectionElements.forEach((element) =>
-      intersectionObserver.observe(element)
-    );
+    sectionElements.forEach((element) => intersectionObserver.observe(element));
 
     const initialHash = window.location.hash?.replace(/^#/, "");
     if (initialHash && anchors.has(initialHash)) {
@@ -241,6 +355,8 @@ export function DocClient({
         anchor.removeEventListener("click", handleAnchorClick)
       );
       intersectionObserver.disconnect();
+      window.removeEventListener("resize", computeAndStore as any);
+      window.removeEventListener("orientationchange", computeAndStore as any);
     };
   }, [sections, smoothScroll, ssrId]);
 
@@ -272,9 +388,7 @@ export function DocClient({
         );
         if (!tooltip) return;
 
-        TOOLTIP_HIDDEN_CLASSES.forEach((cls) =>
-          tooltip.classList.remove(cls)
-        );
+        TOOLTIP_HIDDEN_CLASSES.forEach((cls) => tooltip.classList.remove(cls));
         TOOLTIP_VISIBLE_CLASSES.forEach((cls) => tooltip.classList.add(cls));
 
         const previous = timeouts.get(key);
@@ -286,9 +400,7 @@ export function DocClient({
           TOOLTIP_VISIBLE_CLASSES.forEach((cls) =>
             tooltip.classList.remove(cls)
           );
-          TOOLTIP_HIDDEN_CLASSES.forEach((cls) =>
-            tooltip.classList.add(cls)
-          );
+          TOOLTIP_HIDDEN_CLASSES.forEach((cls) => tooltip.classList.add(cls));
         }, 2000);
 
         timeouts.set(key, timeoutId);

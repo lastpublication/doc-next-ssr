@@ -1,7 +1,7 @@
 import type { DocDocument } from "@lastbrain/doc-next-ssr";
 
 import { DocSSR } from "../../../src/server";
-import { DocClient } from "../../../src/client";
+import { DocClient, ClientOnly } from "../../../src";
 import { ToggleMode } from "./component/toggleMode";
 
 const gettingStartedDoc: DocDocument = {
@@ -143,6 +143,9 @@ export default async function Page() {
       <div className="hidden md:max-w-[420px]" />
       <div className="md:px-8 space-y-2">
         <DocSSR doc={gettingStartedDoc} />
+        <ClientOnly>
+          <DocClient doc={gettingStartedDoc} />
+        </ClientOnly>
       </div>
     </>
   );
