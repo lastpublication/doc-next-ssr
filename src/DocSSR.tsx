@@ -37,6 +37,11 @@ export interface DocSSRProps {
    * Toggle smooth scroll behavior for the enhanced client interactions.
    */
   smoothScroll?: boolean;
+  /**
+   * Tailwind class(es) used to position the sticky summary top offset.
+   * Example: "top-4 lg:top-28". Defaults to "top-0 lg:top-24".
+   */
+  summaryTopClass?: string;
 }
 
 const levelToHeading = (level: number): keyof JSX.IntrinsicElements =>
@@ -152,6 +157,7 @@ export function DocSSR({
   sectionClassName,
   visuallyHidden = false,
   smoothScroll = true,
+  summaryTopClass = "top-0 lg:top-24",
 }: DocSSRProps) {
   const sections = flattenSections(doc);
   const activeId = sections[0]?.id ?? null;
@@ -209,9 +215,11 @@ export function DocSSR({
         suppressHydrationWarning
         data-doc-root={id}
       >
-        <div className="w-full lg:w-auto flex-none z-10 sticky lg:h-[calc(100vh-8rem)] top-0 lg:top-24 left-0 pt-2">
+        <div
+          className={`flex-none z-10 sticky lg:h-[calc(100vh-8rem)] ${summaryTopClass} left-0 pt-2`}
+        >
           <aside
-            className={`w-full lg:w-auto sticky top-24 lg:overflow-y-auto border border-stone-300 dark:border-stone-700 bg-gray-50/60 dark:bg-black/70 rounded-xl p-4 backdrop-blur shadow-sm lg:max-w-[320px]${
+            className={`w-full lg:w-auto sticky ${summaryTopClass} lg:overflow-y-auto border border-stone-300 dark:border-stone-700 bg-gray-50/60 dark:bg-black/70 rounded-xl p-4 backdrop-blur shadow-sm lg:max-w-[320px]${
               summaryClassName ? ` ${summaryClassName}` : ""
             }`}
           >

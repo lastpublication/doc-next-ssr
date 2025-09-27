@@ -142,7 +142,7 @@ export default async function Page() {
       <ToggleMode />
       <div className="hidden md:max-w-[420px]" />
       <div className="md:px-8 space-y-2">
-        <DocSSR doc={gettingStartedDoc} />
+        <DocSSR doc={gettingStartedDoc} summaryTopClass="top-0 lg:top-24" />
 
         <DocClient doc={gettingStartedDoc} />
       </div>
